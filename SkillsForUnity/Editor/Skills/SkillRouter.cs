@@ -99,29 +99,18 @@ namespace UnitySkills
 
                 var skills = new Dictionary<string, SkillInfo>(StringComparer.OrdinalIgnoreCase);
 
-                var allTypes = AppDomain.CurrentDomain.GetAssemblies()
-                    .Where(a => !a.IsDynamic)
-                    .SelectMany(a => { try { return a.GetTypes(); } catch { return new Type[0]; } });
-
-                foreach (var type in allTypes)
+                foreach (var discovered in UnitySkillDiscovery.GetSkills())
                 {
-                    foreach (var method in type.GetMethods(BindingFlags.Public | BindingFlags.Static))
+                    var method = discovered.Method;
+                    var attr = discovered.Attribute;
+                    var name = attr.Name ?? ToSnakeCase(method.Name);
+                    skills[name] = new SkillInfo
                     {
-                        UnitySkillAttribute attr;
-                        try { attr = method.GetCustomAttribute<UnitySkillAttribute>(); }
-                        catch { continue; }
-                        if (attr != null)
-                        {
-                            var name = attr.Name ?? ToSnakeCase(method.Name);
-                            skills[name] = new SkillInfo
-                            {
-                                Name = name,
-                                Description = attr.Description ?? "",
-                                Method = method,
-                                Parameters = method.GetParameters()
-                            };
-                        }
-                    }
+                        Name = name,
+                        Description = attr.Description ?? "",
+                        Method = method,
+                        Parameters = method.GetParameters()
+                    };
                 }
 
                 _skills = skills; // Atomic assignment of fully-built dictionary
@@ -470,4 +459,3 @@ namespace UnitySkills
         }
     }
 }
-
