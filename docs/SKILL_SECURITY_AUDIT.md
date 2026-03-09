@@ -25,7 +25,7 @@ This document records the focused security review for Unity-Skills skill discove
 ## Required Review For New Skills | 新增 Skill 必查项
 
 - [ ] Do not add shell/process execution (`Process.Start`, `cmd.exe`, `/bin/sh`, `powershell`)
-- [ ] Do not add hidden download/execution logic (`WebClient`, `HttpClient`, `UnityWebRequest`) unless explicitly documented
+- [ ] Do not add hidden download/execution logic (`WebClient`, `HttpClient`, `UnityWebRequest`) unless the behavior is explicit, documented, and security-reviewed
 - [ ] Do not auto-expose skills from external assemblies
 - [ ] Validate file paths and asset paths before read/write/delete operations
 - [ ] Reject prompt-like hidden instructions unrelated to the documented skill behavior
