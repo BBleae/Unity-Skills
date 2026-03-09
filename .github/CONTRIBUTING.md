@@ -18,6 +18,7 @@ Thank you for contributing to Unity-Skills!
 - [ ] Import into Unity and verify no errors | 在 Unity 中导入并确认无报错
 - [ ] Test Skills work correctly in your AI tool (Claude Code, Cursor, etc.) | 在你的 AI 工具中测试 Skill 能正常使用
 - [ ] Run HTTP server and verify endpoints respond | 启动 HTTP 服务并验证接口响应正常
+- [ ] Review `docs/SKILL_SECURITY_AUDIT.md` and confirm new/changed skills do not introduce prompt injection, hidden execution, or external assembly auto-registration | 检查 `docs/SKILL_SECURITY_AUDIT.md`，确认没有引入提示词注入、隐藏执行逻辑或外部程序集自动注册 skill
 
 ## Commit Message Format | 提交信息格式
 

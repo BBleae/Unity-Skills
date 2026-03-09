@@ -83,31 +83,18 @@ namespace UnitySkills
         {
             _skillsByCategory = new Dictionary<string, List<SkillInfo>>();
 
-            var allTypes = System.AppDomain.CurrentDomain.GetAssemblies()
-                .Where(a => !a.IsDynamic)
-                .SelectMany(a => { try { return a.GetTypes(); } catch { return new System.Type[0]; } });
-
-            foreach (var type in allTypes)
+            foreach (var discovered in UnitySkillDiscovery.GetSkills())
             {
-                foreach (var method in type.GetMethods(BindingFlags.Public | BindingFlags.Static))
-                {
-                    UnitySkillAttribute attr;
-                    try { attr = method.GetCustomAttribute<UnitySkillAttribute>(); }
-                    catch { continue; }
-                    if (attr != null)
-                    {
-                        var category = type.Name.Replace("Skills", "");
-                        if (!_skillsByCategory.ContainsKey(category))
-                            _skillsByCategory[category] = new List<SkillInfo>();
+                var category = discovered.Type.Name.Replace("Skills", "");
+                if (!_skillsByCategory.ContainsKey(category))
+                    _skillsByCategory[category] = new List<SkillInfo>();
 
-                        _skillsByCategory[category].Add(new SkillInfo
-                        {
-                            Name = attr.Name ?? method.Name,
-                            Description = attr.Description ?? "",
-                            Method = method
-                        });
-                    }
-                }
+                _skillsByCategory[category].Add(new SkillInfo
+                {
+                    Name = discovered.Attribute.Name ?? discovered.Method.Name,
+                    Description = discovered.Attribute.Description ?? "",
+                    Method = discovered.Method
+                });
             }
 
             foreach (var cat in _skillsByCategory.Keys)

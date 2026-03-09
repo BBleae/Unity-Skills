@@ -406,24 +406,13 @@ This file declares available skills for AI agents like Codex.
             // Dynamic Reflection Logic
             var skillsByCategory = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.List<System.Reflection.MethodInfo>>();
             
-            var allTypes = System.AppDomain.CurrentDomain.GetAssemblies()
-                .Where(a => !a.IsDynamic)
-                .SelectMany(a => { try { return a.GetTypes(); } catch { return new System.Type[0]; } });
-
-            foreach (var type in allTypes)
+            foreach (var discovered in UnitySkillDiscovery.GetSkills())
             {
-                foreach (var method in type.GetMethods(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static))
-                {
-                    var attr = System.Reflection.CustomAttributeExtensions.GetCustomAttribute<UnitySkillAttribute>(method);
-                    if (attr != null)
-                    {
-                        var category = type.Name.Replace("Skills", "");
-                        if (!skillsByCategory.ContainsKey(category))
-                            skillsByCategory[category] = new System.Collections.Generic.List<System.Reflection.MethodInfo>();
+                var category = discovered.Type.Name.Replace("Skills", "");
+                if (!skillsByCategory.ContainsKey(category))
+                    skillsByCategory[category] = new System.Collections.Generic.List<System.Reflection.MethodInfo>();
 
-                        skillsByCategory[category].Add(method);
-                    }
-                }
+                skillsByCategory[category].Add(discovered.Method);
             }
 
             foreach (var category in skillsByCategory.Keys.OrderBy(k => k))
